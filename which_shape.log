@@ -1,0 +1,128 @@
+        OCaml version 4.02.3
+
+# val gen_string : int * 'a -> 'a list = <fun>
+val gen_square : int -> string list = <fun>
+val gen_rect : int * int -> string list = <fun>
+val ctUpRec : string list * int -> int = <fun>
+val countups : string list * 'a -> int = <fun>
+val consec_counts : 'a list * int * 'a -> 'a list * int = <fun>
+val consecLen : 'a list * int * 'a -> int = <fun>
+val consecList : 'a list * int * 'a -> 'a list = <fun>
+val uCt : string list -> int = <fun>
+val uList : string list -> string list = <fun>
+val rCt : string list -> int = <fun>
+val rList : string list -> string list = <fun>
+val dCt : string list -> int = <fun>
+val dList : string list -> string list = <fun>
+val lCt : string list -> int = <fun>
+val lList : string list -> string list = <fun>
+val m30Ct : string list -> int = <fun>
+val m30List : string list -> string list = <fun>
+val p240Ct : string list -> int = <fun>
+val p240List : string list -> string list = <fun>
+val sq : string list -> bool = <fun>
+val sq_all : string list -> bool = <fun>
+val sqA : string list -> bool = <fun>
+val eqtriA : string list -> bool = <fun>
+val one_shift : 'a list -> 'a list = <fun>
+val allShftRec : 'a list list * int -> 'a list list = <fun>
+val all_shifts : 'a list -> 'a list list = <fun>
+val all_cases : 'a list -> 'a list list = <fun>
+val try_all_sqA : string list -> bool = <fun>
+val try_all_eqtriA : string list -> bool = <fun>
+
+let gen_stringTEST1 = gen_string(3,"a");;
+val gen_stringTEST1 : string list = ["a"; "a"; "a"]
+
+let genstringTEST2 = gen_string(7,"m30");;
+val gen_stringTEST2 : string list =
+  ["m30"; "m30"; "m30"; "m30"; "m30"; "m30"; "m30"]
+
+let gen_squareTEST1 = gen_square(2);;
+val gen_squareTEST1 : string list = ["u"; "u"; "r"; "r"; "d"; "d"; "l"; "l"]
+
+let gen_squareTEST2 = gen_square(4);;
+val gen_squareTEST2 : string list =
+  ["u"; "u"; "u"; "u"; "r"; "r"; "r"; "r"; "d"; "d"; "d"; "d"; "l"; "l"; "l";
+   "l"]
+
+let gen_rectTEST1 = gen_rect(2,3);;
+val gen_rectTEST1 : string list =
+  ["u"; "u"; "r"; "r"; "r"; "d"; "d"; "l"; "l"; "l"]
+
+let gen_rectTEST2 = gen_rect(3,1);;
+val gen_rectTEST2 : string list = ["u"; "u"; "u"; "r"; "d"; "d"; "d"; "l"]
+
+let countupsTEST1 = countups(["u";"u";"x"],0);;
+val countupsTEST1 : int = 2
+
+let countupsTEST2 = countups(["x";"u";"x"],0);;
+val countupsTEST2 : int = 1
+
+
+let consec_countsTEST1 = consec_counts(["x";"x";"u"],0,"x");;
+val consec_countsTEST1 : string list * int = (["u"], 2)
+
+let consec_countsTEST2 = consec_counts(["u";"x";"u"],0,"x");;
+val consec_countsTEST2 : string list * int = (["u"; "x"; "u"], 0)
+
+let sqTEST1 = sq(["u";"r";"d";"d";"l"]);;
+val sqTEST1 : bool = true
+
+let sqTEST2 = sq(["u";"r";"d";"d";"l";"l";"x"]);;
+val sqTEST2 : bool = true
+
+let sq_allTEST1 = sq_all(["u";"r";"r";"d";"d";"l";"l"]);;
+val sq_allTEST1 : bool = true
+
+let sq_allTEST2 = sq_all(["u";"u";"r";"r";"d";"d";"l";"l"]);;
+val sq_allTEST2 : bool = true
+
+let sqATEST1 = sqA(["u";"u";"r";"r";"d";"d";"l";"l"]);;
+val sqATEST1 : bool = true
+
+let sqATEST2 = sqA(["u";"u";"r";"r";"d";"d";"l";"l";"u"]);;
+val sqATEST2 : bool = false
+
+
+let eqtriATEST1 = eqtriA(["u";"u";"m30";"m30";"p240";"p240"]);;
+val eqtriATEST1 : bool = true
+
+
+let eqtriATEST2 = eqtriA(["u";"u";"m30";"m30";"p240";"p240";"u"]);;
+vai eqtriATEST2 : bool = false
+
+let one_shiftTEST1 = one_shift([3;2;1]);;
+val one_shiftTEST1 : int list = [2; 1; 3]
+
+let one_shiftTEST2 = one_shift(["a";"b"]);;
+val one_shiftTEST2 : string list = ["b"; "a"]
+
+let all_shiftsTEST1 = all_shifts([3;2;1]);;
+val all_shiftsTEST1 : int list list = [[2; 1; 3]; [1; 3; 2]]
+
+let all_shiftsTEST2 = all_shifts(["a";"b"]);;
+val all_shiftsTEST2 : string list list =
+  [["m30"; "p240"; "u"]; ["p240"; "u"; "m30"]]
+
+let all_casesTEST1 = all_cases([3;2;1]);;
+val all_casesTEST1 : int list list = [[3; 2; 1]; [2; 1; 3]; [1; 3; 2]]
+
+let all_casesTEST2 = all_cases(["u";"m30";"p240"]);;
+val all_casesTEST2 : string list list =
+  [["u"; "m30"; "p240"]; ["m30"; "p240"; "u"]; ["p240"; "u"; "m30"]]
+
+let try_all_sqATEST1 = try_all_sqA(["u";"r";"r";"d";"d";"l";"l";"u"]);;
+val try_all_sqATEST1 : bool = true
+
+let try_all_sqATEST2 = try_all_sqA(["r";"d";"l";"u"]);;
+val try_all_sqATEST2 : bool = true
+
+let try_all_eqtriATEST1 = try_all_eqtriA(["m30";"m30";"p240";"p240";"u";"u"]);;
+val try_all_eqtriATEST1 : bool = true
+
+let try_all_eqtriATEST2 = try_all_eqtriA(["p240";"u";"m30"]);;
+val try_all_eqtriATEST2 : bool = true
+#
+
+

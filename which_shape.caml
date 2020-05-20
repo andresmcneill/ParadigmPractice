@@ -1,0 +1,232 @@
+(*	
+ *	Andres McNeill
+ *	SDE2
+ *	CPSC3520
+ *	April 11, 2019
+ *)
+
+
+let rec gen_string = function (n,what) ->
+if n == 0 then []
+
+else what :: gen_string(n-1,what);;
+
+
+let gen_square = function n ->
+gen_string(n,"u")@gen_string(n,"r")@gen_string(n,"d")@gen_string(n,"l");;
+
+
+let gen_rect = function (n,m) ->
+gen_string(n,"u")@gen_string(m,"r")@gen_string(n,"d")@gen_string(m,"l");;
+
+
+let rec ctUpRec = function (alist,n) ->
+if List.length alist == 0 then n
+
+else if List.hd alist = "u" then
+    ctUpRec(List.tl alist,n+1)
+
+else ctUpRec(List.tl alist,n);;
+
+
+let countups = function (alist,n) -> ctUpRec(alist,0);;
+
+
+let rec consec_counts = function (alist,count,what) ->
+    if (List.length alist = 0) || ((compare (List.hd alist) what) != 0) then
+        (alist,count)
+    else consec_counts(List.tl alist,count+1,what);;
+
+
+let rec consecLen = function (alist,count,what) ->
+    if (List.length alist = 0) || ((compare (List.hd alist) what) != 0) then
+        count
+    else consecLen(List.tl alist,count+1,what);;
+
+
+let rec consecList = function (alist,count,what) ->
+    if (List.length alist = 0) || ((compare (List.hd alist) what) != 0) then
+        alist
+    else consecList(List.tl alist,count+1,what);;
+
+
+let uCt = function (alist) -> consecLen(alist,0,"u");;
+let uList = function (alist) -> consecList(alist,0,"u");;
+
+let rCt = function (alist) -> consecLen(alist,0,"r");;
+let rList = function (alist) -> consecList(alist,0,"r");;
+
+let dCt = function (alist) -> consecLen(alist,0,"d");;
+let dList = function (alist) -> consecList(alist,0,"d");;
+
+let lCt = function (alist) -> consecLen(alist,0,"l");;
+let lList = function (alist) -> consecList(alist,0,"l");;
+
+let m30Ct = function (alist) -> consecLen(alist,0,"m30");;
+let m30List = function (alist) -> consecList(alist,0,"m30");;
+
+let p240Ct = function (alist) -> consecLen(alist,0,"p240");;
+let p240List = function (alist) -> consecList(alist,0,"p240");;
+
+
+let sq = function (alist) ->
+    (uCt(alist) > 0) &&
+    (rCt(uList(alist)) > 0) &&
+    (dCt(rList(uList(alist))) > 0) &&
+    (lCt(dList(rList(uList(alist)))) > 0);;
+
+
+let sq_all = function (alist) ->
+    (uCt(alist) > 0) &&
+    (rCt(uList(alist)) > 0) &&
+    (dCt(rList(uList(alist))) > 0) &&
+    (lCt(dList(rList(uList(alist)))) > 0) &&
+    (List.length (lList(dList(rList(uList(alist))))) = 0);;
+
+
+let sqA = function (alist) ->
+    (uCt(alist) = rCt(uList(alist))) &&
+    (uCt(alist) = dCt(rList(uList(alist)))) &&
+    (uCt(alist) = lCt(dList(rList(uList(alist))))) &&
+    (List.length (lList(dList(rList(uList(alist))))) = 0);;
+
+
+let eqtriA = function (alist) ->
+    (uCt(alist) = m30Ct(uList(alist))) &&
+    (uCt(alist) = p240Ct(m30List(uList(alist)))) &&
+    (List.length (p240List(m30List(uList(alist)))) = 0);;
+
+
+let one_shift = function (alist) -> (List.tl alist)@[(List.hd alist)];;
+
+
+let rec allShftRec = function (shiftList,n) ->
+	if n = 1 then shiftList
+
+	else allShftRec(shiftList@[one_shift(
+		List.nth shiftList (((List.length shiftList)) - 1))], n-1);;
+
+
+let all_shifts = function (alist) ->
+    allShftRec([one_shift(alist)], (List.length alist) - 1);;
+
+
+let all_cases = function (alist) ->
+    allShftRec([alist], (List.length alist));;
+
+
+let try_all_sqA = function (alist) ->
+if (compare (List.hd alist) "u") = 0 then
+    if (List.length (lList(dList(rList(uList(alist))))) = 0) then
+        (uCt(alist) = rCt(uList(alist))) &&
+        (uCt(alist) = dCt(rList(uList(alist)))) &&
+        (uCt(alist) = lCt(dList(rList(uList(alist)))))
+    else
+        (rCt(uList(alist)) = 
+            uCt(alist) + uCt(lList(dList(rList(uList(alist)))))) &&
+        (rCt(uList(alist)) = dCt(rList(uList(alist)))) &&
+        (rCt(uList(alist)) = lCt(dList(rList(uList(alist))))) &&
+        (List.length (uList(lList(dList(rList(uList(alist)))))) = 0)
+
+else if (compare (List.hd alist) "r") = 0 then
+    if List.length (uList(lList(dList(rList(alist))))) = 0 then 
+        (rCt(alist) = dCt(rList(alist))) &&
+        (rCt(alist) = lCt(dList(rList(alist)))) &&
+        (rCt(alist) = uCt(lList(dList(rList(alist)))))
+    else
+        (dCt(rList(alist)) = 
+            rCt(alist) + rCt(uList(lList(dList(rList(alist)))))) &&
+        (dCt(rList(alist)) = uCt(lList(dList(rList(alist))))) &&
+        (dCt(rList(alist)) = lCt(dList(rList(alist)))) &&
+        (List.length (rList(uList(lList(dList(rList(alist)))))) = 0)
+
+else if (compare (List.hd alist) "d") = 0 then
+    if List.length (rList(uList(lList(dList(alist))))) = 0 then 
+        (dCt(alist) = lCt(dList(alist))) &&
+        (dCt(alist) = uCt(lList(dList(alist)))) &&
+        (dCt(alist) = rCt(uList(lList(dList(alist)))))
+    else
+        (lCt(dList(alist)) = 
+            dCt(alist) + dCt(rList(uList(lList(dList(alist)))))) &&
+        (lCt(dList(alist)) = uCt(lList(dList(alist)))) &&
+        (lCt(dList(alist)) = rCt(uList(lList(dList(alist))))) &&
+        (List.length (dList(rList(uList(lList(dList(alist)))))) = 0)
+
+else if (compare (List.hd alist) "l") = 0 then
+    if List.length (dList(rList(uList(lList(alist))))) = 0 then 
+        (lCt(alist) = uCt(lList(alist))) &&
+        (lCt(alist) = rCt(uList(lList(alist)))) &&
+        (lCt(alist) = dCt(rList(uList(lList(alist)))))
+    else
+        (uCt(lList(alist)) =
+            lCt(alist) + lCt(dList(rList(uList(lList(alist)))))) &&
+        (uCt(lList(alist)) = rCt(uList(lList(alist)))) &&
+        (uCt(lList(alist)) = dCt(rList(uList(lList(alist))))) &&
+        (List.length (lList(dList(rList(uList(lList(alist)))))) = 0)
+
+else false;;
+
+
+let try_all_eqtriA = function (alist) ->
+if (compare (List.hd alist) "u") = 0 then
+    if (List.length (p240List(m30List(uList(alist)))) = 0) then
+        (uCt(alist) = m30Ct(uList(alist))) &&
+        (uCt(alist) = p240Ct(m30List(uList(alist))))
+    else
+        (m30Ct(uList(alist)) = 
+            uCt(alist) + uCt(p240List(m30List(uList(alist))))) &&
+        (m30Ct(uList(alist)) = p240Ct(m30List(uList(alist)))) &&
+        (List.length (uList(p240List(m30List(uList(alist))))) = 0)
+
+else if (compare (List.hd alist) "m30") = 0 then
+    if (List.length (uList(p240List(m30List(alist)))) = 0) then
+        (m30Ct(alist) = p240Ct(m30List(alist))) &&
+        (m30Ct(alist) = uCt(p240List(m30List(alist))))
+    else
+        (p240Ct(m30List(alist)) = 
+            m30Ct(alist) + m30Ct(uList(p240List(m30List(alist))))) &&
+        (p240Ct(m30List(alist)) = uCt(p240List(m30List(alist)))) &&
+        (List.length (m30List(uList(p240List(m30List(alist))))) = 0)
+
+else if (compare (List.hd alist) "p240") = 0 then
+    if (List.length (m30List(uList(p240List(alist)))) = 0) then
+        (p240Ct(alist) = uCt(p240List(alist))) &&
+        (p240Ct(alist) = m30Ct(uList(p240List(alist))))
+    else
+        (uCt(p240List(alist)) = 
+            p240Ct(alist) + p240Ct(m30List(uList(p240List(alist))))) &&
+        (uCt(p240List(alist)) = m30Ct(uList(p240List(alist)))) &&
+        (List.length (p240List(m30List(uList(p240List(alist))))) = 0)
+
+else false;;
+
+(*
+let gen_stringTEST1 = gen_string(3,"a");;
+let gen_stringTEST2 = gen_string(7,"m30");;
+let gen_squareTEST1 = gen_square(2);;
+let gen_squareTEST2 = gen_square(4);;
+let gen_rectTEST1 = gen_rect(2,3);;
+let gen_rectTEST2 = gen_rect(3,1);;
+let countupsTEST1 = countups(["u";"u";"x"],0);;
+let countupsTEST2 = countups(["x";"u";"x"],0);;
+let consec_countsTEST1 = consec_counts(["x";"x";"u"],0,"x");;
+let consec_countsTEST2 = consec_counts(["u";"x";"u"],0,"x");;
+let sqTEST1 = sq(["u";"r";"d";"d";"l"]);;
+let sqTEST2 = sq(["u";"r";"d";"d";"l";"l";"x"]);;
+let sq_allTEST1 = sq_all(["u";"r""r";"d";"d";"l";"l"]);;
+let sq_allTEST2 = sq_all(["u";"u";"r";"r";"d";"d";"l";"l"]);;
+let sqATEST1 = sqA(["u";"u";"r";"r";"d";"d";"l";"l"]);;
+let sqATEST2 = sqA(["u";"u";"r";"r";"d";"d";"l";"l";"u"]);;
+let eqtriATEST1 = eqtriA(["u";"u";"m30";"m30";"p240";"p240"]);;
+let eqtriATEST2 = eqtriA(["u";"u";"m30";"m30";"p240";"p240";"u"]);;
+let one_shiftTEST1 = one_shift([3;2;1]);;
+let one_shiftTEST2 = one_shift(["a";"b"]);;
+let all_shiftsTEST1 = all_shifts([3;2;1]);;
+let all_shiftsTEST2 = all_shifts(["u";"m30";"p240"]);;
+let all_casesTEST1 = all_cases([3;2;1]);;
+let all_casesTEST2 = all_cases(["u";"m30";"p240"]);;
+let try_all_sqATEST1 = try_all_sqA(["u";"r";"r";"d";"d";"l";"l";"u"]);;
+let try_all_sqATEST2 = try_all_sqA(["r";"d";"l";"u"]);;
+let try_all_eqtriATEST1 = try_all_eqtriA(["m30";"m30";"p240";"p240";"u";"u"]);;
+let try_all_eqtriATEST2 = try_all_eqtriA(["p240";"u";"m30"]);;
+*)
